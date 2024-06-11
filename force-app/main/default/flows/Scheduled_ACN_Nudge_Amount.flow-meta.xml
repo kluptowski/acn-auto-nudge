@@ -178,7 +178,7 @@
             <label>Decrease</label>
         </rules>
     </decisions>
-    <description>A scheduled flow to change the amount of random opportunities</description>
+    <description>A scheduled flow to change the amount of random opportunities + fix error</description>
     <environments>Default</environments>
     <formulas>
         <description>Amount to decrease</description>
@@ -191,7 +191,7 @@
         <description>Amount after adjustment increase</description>
         <name>fAmountIncrease</name>
         <dataType>Currency</dataType>
-        <expression>{!Loop_thru_Top_amts.Amount}+({!Loop_thru_Top_amts.Amount}*({!Get_Random_Amount_Decrease.randomNumber}/100))</expression>
+        <expression>{!Loop_thru_Top_amts.Amount}+({!Loop_thru_Top_amts.Amount}*({!Get_Random_Amount_Increase.randomNumber}/100))</expression>
         <scale>2</scale>
     </formulas>
     <interviewLabel>Scheduled ACN Nudge - Amount {!$Flow.CurrentDateTime}</interviewLabel>
@@ -287,7 +287,7 @@
         </schedule>
         <triggerType>Scheduled</triggerType>
     </start>
-    <status>Active</status>
+    <status>Draft</status>
     <variables>
         <name>currentItemFromSourceCollection</name>
         <dataType>SObject</dataType>
