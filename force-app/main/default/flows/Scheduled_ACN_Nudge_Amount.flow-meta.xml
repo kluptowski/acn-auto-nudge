@@ -4,8 +4,8 @@
         <description>default - between 8 and 20 percent</description>
         <name>Get_Random_Amount_Decrease</name>
         <label>Get Random Amount Decrease</label>
-        <locationX>264</locationX>
-        <locationY>792</locationY>
+        <locationX>138</locationX>
+        <locationY>900</locationY>
         <actionName>GetRandomNumber</actionName>
         <actionType>apex</actionType>
         <connector>
@@ -32,8 +32,8 @@
         <description>default - between 8 and 20 percent</description>
         <name>Get_Random_Amount_Increase</name>
         <label>Get Random Amount Increase</label>
-        <locationX>528</locationX>
-        <locationY>792</locationY>
+        <locationX>402</locationX>
+        <locationY>900</locationY>
         <actionName>GetRandomNumber</actionName>
         <actionType>apex</actionType>
         <connector>
@@ -60,8 +60,8 @@
         <description>gets a random value between 0 and 1 so that way we can have a split decision of whether we increase or decrease the amount</description>
         <name>randint</name>
         <label>randint()</label>
-        <locationX>396</locationX>
-        <locationY>576</locationY>
+        <locationX>270</locationX>
+        <locationY>684</locationY>
         <actionName>GetRandomNumber</actionName>
         <actionType>apex</actionType>
         <connector>
@@ -89,8 +89,8 @@
         <description>sets the new value of the opp amount and adds the opp to the collection</description>
         <name>Set_Decrease_Amount</name>
         <label>Set Decrease Amount</label>
-        <locationX>264</locationX>
-        <locationY>900</locationY>
+        <locationX>138</locationX>
+        <locationY>1008</locationY>
         <assignmentItems>
             <assignToReference>Loop_thru_Top_amts.Amount</assignToReference>
             <operator>Assign</operator>
@@ -113,8 +113,8 @@
         <description>sets the new value of the opp amount and adds the opp to the collection that gets updated</description>
         <name>Set_Increase_Amount</name>
         <label>Set Increase Amount</label>
-        <locationX>528</locationX>
-        <locationY>900</locationY>
+        <locationX>402</locationX>
+        <locationY>1008</locationY>
         <assignmentItems>
             <assignToReference>Loop_thru_Top_amts.Amount</assignToReference>
             <operator>Assign</operator>
@@ -138,8 +138,8 @@
         <name>Sort_by_Amount_Desc</name>
         <elementSubtype>SortCollectionProcessor</elementSubtype>
         <label>Sort by Amount Desc</label>
-        <locationX>176</locationX>
-        <locationY>360</locationY>
+        <locationX>50</locationX>
+        <locationY>468</locationY>
         <collectionProcessorType>SortCollectionProcessor</collectionProcessorType>
         <collectionReference>Get_Open_Opps</collectionReference>
         <connector>
@@ -156,8 +156,8 @@
         <description>If the randint is lower than 0.5 then decrease the amount</description>
         <name>Fifty_Fifty</name>
         <label>Fifty Fifty</label>
-        <locationX>396</locationX>
-        <locationY>684</locationY>
+        <locationX>270</locationX>
+        <locationY>792</locationY>
         <defaultConnector>
             <targetReference>Get_Random_Amount_Increase</targetReference>
         </defaultConnector>
@@ -178,7 +178,30 @@
             <label>Decrease</label>
         </rules>
     </decisions>
-    <description>A scheduled flow to change the amount of random opportunities + fix error</description>
+    <decisions>
+        <description>Lets you determine if you do or dont want to run the flow based on day of the week. 1 = sunday, 2= monday, 7 = saturday. at default, will run every day except saturday.</description>
+        <name>Want_to_run_it</name>
+        <label>Want to run it?</label>
+        <locationX>182</locationX>
+        <locationY>252</locationY>
+        <defaultConnectorLabel>Dont run it this day</defaultConnectorLabel>
+        <rules>
+            <name>Yes_Run_It</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>fDayOfTheWeek</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <numberValue>7.0</numberValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Get_Open_Opps</targetReference>
+            </connector>
+            <label>Yes Run It</label>
+        </rules>
+    </decisions>
+    <description>A scheduled flow to change the amount of random opportunities. Includes optional gating by day of the week.</description>
     <environments>Default</environments>
     <formulas>
         <description>Amount to decrease</description>
@@ -191,8 +214,16 @@
         <description>Amount after adjustment increase</description>
         <name>fAmountIncrease</name>
         <dataType>Currency</dataType>
-        <expression>{!Loop_thru_Top_amts.Amount}+({!Loop_thru_Top_amts.Amount}*({!Get_Random_Amount_Increase.randomNumber}/100))</expression>
+        <expression>{!Loop_thru_Top_amts.Amount}+({!Loop_thru_Top_amts.Amount}*({!Get_Random_Amount_Decrease.randomNumber}/100))</expression>
         <scale>2</scale>
+    </formulas>
+    <formulas>
+        <description>Returns a number based on the day of the week. 
+1= sunday, 2= monday, ... , 7= saturday. this formula exists so that way if you dont want to run it every single day you dont have to.</description>
+        <name>fDayOfTheWeek</name>
+        <dataType>Number</dataType>
+        <expression>WEEKDAY(today())</expression>
+        <scale>0</scale>
     </formulas>
     <interviewLabel>Scheduled ACN Nudge - Amount {!$Flow.CurrentDateTime}</interviewLabel>
     <label>Scheduled ACN Nudge - Amount</label>
@@ -200,8 +231,8 @@
         <description>loops thru each of those opps 1 by 1</description>
         <name>Loop_thru_Top_amts</name>
         <label>Loop thru Top amts</label>
-        <locationX>176</locationX>
-        <locationY>468</locationY>
+        <locationX>50</locationX>
+        <locationY>576</locationY>
         <collectionReference>Get_Open_Opps</collectionReference>
         <iterationOrder>Asc</iterationOrder>
         <nextValueConnector>
@@ -234,8 +265,8 @@
         <description>Finds open opps that dont have products (so you can update the amount)</description>
         <name>Get_Open_Opps</name>
         <label>Get Open Opps No Line Items</label>
-        <locationX>176</locationX>
-        <locationY>252</locationY>
+        <locationX>50</locationX>
+        <locationY>360</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Sort_by_Amount_Desc</targetReference>
@@ -270,15 +301,15 @@
         <description>Changes the amount of all opps found</description>
         <name>Update_Amounts_on_looped_opps</name>
         <label>Update Amounts on looped opps</label>
-        <locationX>176</locationX>
-        <locationY>1176</locationY>
+        <locationX>50</locationX>
+        <locationY>1284</locationY>
         <inputReference>rcvOpp</inputReference>
     </recordUpdates>
     <start>
-        <locationX>50</locationX>
+        <locationX>56</locationX>
         <locationY>0</locationY>
         <connector>
-            <targetReference>Get_Open_Opps</targetReference>
+            <targetReference>Want_to_run_it</targetReference>
         </connector>
         <schedule>
             <frequency>Daily</frequency>
@@ -287,7 +318,7 @@
         </schedule>
         <triggerType>Scheduled</triggerType>
     </start>
-    <status>Draft</status>
+    <status>Active</status>
     <variables>
         <name>currentItemFromSourceCollection</name>
         <dataType>SObject</dataType>

@@ -4,8 +4,8 @@
         <description>random number of days to push</description>
         <name>random_Days_Push</name>
         <label>random Days Push</label>
-        <locationX>264</locationX>
-        <locationY>576</locationY>
+        <locationX>138</locationX>
+        <locationY>684</locationY>
         <actionName>GetRandomNumber</actionName>
         <actionType>apex</actionType>
         <connector>
@@ -31,8 +31,8 @@
     <actionCalls>
         <name>Random_Pull_Number</name>
         <label>Random Pull Number</label>
-        <locationX>264</locationX>
-        <locationY>1200</locationY>
+        <locationX>138</locationX>
+        <locationY>1308</locationY>
         <actionName>GetRandomNumber</actionName>
         <actionType>apex</actionType>
         <connector>
@@ -59,8 +59,8 @@
     <assignments>
         <name>assign_to_variable</name>
         <label>assign to variable</label>
-        <locationX>264</locationX>
-        <locationY>1308</locationY>
+        <locationX>138</locationX>
+        <locationY>1416</locationY>
         <assignmentItems>
             <assignToReference>Loop_thru_Pull.CloseDate</assignToReference>
             <operator>Assign</operator>
@@ -83,8 +83,8 @@
         <description>assignment for the opps to push</description>
         <name>Push_Opps</name>
         <label>Push Opps</label>
-        <locationX>264</locationX>
-        <locationY>684</locationY>
+        <locationX>138</locationX>
+        <locationY>792</locationY>
         <assignmentItems>
             <assignToReference>Loop_thru_Close_Date_Opps.CloseDate</assignToReference>
             <operator>Assign</operator>
@@ -108,8 +108,8 @@
         <name>Sort_Close_Dates</name>
         <elementSubtype>SortCollectionProcessor</elementSubtype>
         <label>Sort Close Dates</label>
-        <locationX>176</locationX>
-        <locationY>360</locationY>
+        <locationX>50</locationX>
+        <locationY>468</locationY>
         <collectionProcessorType>SortCollectionProcessor</collectionProcessorType>
         <collectionReference>Get_Records_for_Close_Date_Push</collectionReference>
         <connector>
@@ -127,8 +127,8 @@
         <name>Sort_Pull_Close_Dates</name>
         <elementSubtype>SortCollectionProcessor</elementSubtype>
         <label>Sort Pull Close Dates</label>
-        <locationX>176</locationX>
-        <locationY>984</locationY>
+        <locationX>50</locationX>
+        <locationY>1092</locationY>
         <collectionProcessorType>SortCollectionProcessor</collectionProcessorType>
         <collectionReference>Get_Records_for_Close_Date_Pull</collectionReference>
         <connector>
@@ -141,7 +141,30 @@
             <sortOrder>Asc</sortOrder>
         </sortOptions>
     </collectionProcessors>
-    <description>A scheduled flow to change the close date of random opportunities</description>
+    <decisions>
+        <description>Lets you determine if you do or dont want to run the flow based on day of the week. 1 = sunday, 2= monday, 7 = saturday. at default, will run every day except saturday.</description>
+        <name>Want_to_run_it</name>
+        <label>Want to run it?</label>
+        <locationX>182</locationX>
+        <locationY>252</locationY>
+        <defaultConnectorLabel>dont run it this day</defaultConnectorLabel>
+        <rules>
+            <name>Yes_Run_It</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>fDayofTheWeek</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <numberValue>7.0</numberValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Get_Records_for_Close_Date_Push</targetReference>
+            </connector>
+            <label>Yes Run It</label>
+        </rules>
+    </decisions>
+    <description>A scheduled flow to change the close date of random opportunities. Includes optional gating by day of the week.</description>
     <environments>Default</environments>
     <formulas>
         <name>fCloseDatePushFinal</name>
@@ -153,6 +176,14 @@
         <name>fDateStageChangeReset</name>
         <dataType>Date</dataType>
         <expression>TODAY()-2</expression>
+    </formulas>
+    <formulas>
+        <description>Returns a number based on the day of the week.
+1= sunday, 2= monday, ... , 7= saturday. this formula exists so that way if you dont want to run it every single day you dont have to.</description>
+        <name>fDayofTheWeek</name>
+        <dataType>Number</dataType>
+        <expression>WEEKDAY(today())</expression>
+        <scale>0</scale>
     </formulas>
     <formulas>
         <name>fPullAheadFinal</name>
@@ -176,8 +207,8 @@
         <description>cycles thru the top 5 earliest close dates so that they can be changed</description>
         <name>Loop_thru_Close_Date_Opps</name>
         <label>Loop thru Close Date Opps</label>
-        <locationX>176</locationX>
-        <locationY>468</locationY>
+        <locationX>50</locationX>
+        <locationY>576</locationY>
         <collectionReference>Get_Records_for_Close_Date_Push</collectionReference>
         <iterationOrder>Asc</iterationOrder>
         <nextValueConnector>
@@ -190,8 +221,8 @@
     <loops>
         <name>Loop_thru_Pull</name>
         <label>Loop thru Pull</label>
-        <locationX>176</locationX>
-        <locationY>1092</locationY>
+        <locationX>50</locationX>
+        <locationY>1200</locationY>
         <collectionReference>Get_Records_for_Close_Date_Pull</collectionReference>
         <iterationOrder>Asc</iterationOrder>
         <nextValueConnector>
@@ -224,8 +255,8 @@
         <description>Open Opp and Close Date in time frame</description>
         <name>Get_Records_for_Close_Date_Pull</name>
         <label>Get Records for Close Date Pull</label>
-        <locationX>176</locationX>
-        <locationY>876</locationY>
+        <locationX>50</locationX>
+        <locationY>984</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Sort_Pull_Close_Dates</targetReference>
@@ -253,8 +284,8 @@
         <description>Open Opp and Close Date in time frame</description>
         <name>Get_Records_for_Close_Date_Push</name>
         <label>Get Records for Close Date Push</label>
-        <locationX>176</locationX>
-        <locationY>252</locationY>
+        <locationX>50</locationX>
+        <locationY>360</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Sort_Close_Dates</targetReference>
@@ -281,15 +312,15 @@
     <recordUpdates>
         <name>Update_Close_Dates</name>
         <label>Update Close Dates</label>
-        <locationX>176</locationX>
-        <locationY>1500</locationY>
+        <locationX>50</locationX>
+        <locationY>1608</locationY>
         <inputReference>krcvOppsCloseDate</inputReference>
     </recordUpdates>
     <start>
-        <locationX>50</locationX>
+        <locationX>56</locationX>
         <locationY>0</locationY>
         <connector>
-            <targetReference>Get_Records_for_Close_Date_Push</targetReference>
+            <targetReference>Want_to_run_it</targetReference>
         </connector>
         <schedule>
             <frequency>Daily</frequency>

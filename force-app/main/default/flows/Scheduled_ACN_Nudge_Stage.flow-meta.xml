@@ -4,8 +4,8 @@
         <description>Between 0 and 1 for probability weighting</description>
         <name>Random_Number_for_Stage</name>
         <label>Random Number for Stage</label>
-        <locationX>528</locationX>
-        <locationY>900</locationY>
+        <locationX>402</locationX>
+        <locationY>1008</locationY>
         <actionName>GetRandomNumber</actionName>
         <actionType>apex</actionType>
         <connector>
@@ -33,8 +33,8 @@
         <description>throw alll these into one cv so they can be looped</description>
         <name>Combine_Opps_for_Stage_Loop</name>
         <label>Combine Opps for Stage Loop</label>
-        <locationX>176</locationX>
-        <locationY>684</locationY>
+        <locationX>50</locationX>
+        <locationY>792</locationY>
         <assignmentItems>
             <assignToReference>stageOppsFoundForLoopAtoZ</assignToReference>
             <operator>Add</operator>
@@ -71,8 +71,8 @@
         <description>moves stage to closed lost and adds to record collection variable</description>
         <name>Set_Stage_Closed_Lost</name>
         <label>Set Stage Closed Lost</label>
-        <locationX>528</locationX>
-        <locationY>1116</locationY>
+        <locationX>402</locationX>
+        <locationY>1224</locationY>
         <assignmentItems>
             <assignToReference>Loop_Thru_Opps_For_Stage_Change.StageName</assignToReference>
             <operator>Assign</operator>
@@ -95,8 +95,8 @@
         <description>moves stage down 1 and adds to record collection variable</description>
         <name>Set_Stage_to_Decrement_Formula</name>
         <label>Set Stage to Decrement Formula</label>
-        <locationX>264</locationX>
-        <locationY>1116</locationY>
+        <locationX>138</locationX>
+        <locationY>1224</locationY>
         <assignmentItems>
             <assignToReference>Loop_Thru_Opps_For_Stage_Change.StageName</assignToReference>
             <operator>Assign</operator>
@@ -119,8 +119,8 @@
         <description>moves stage up 1 and adds to record collection variable</description>
         <name>Set_Stage_to_Increment_Formula</name>
         <label>Set Stage to Increment Formula</label>
-        <locationX>792</locationX>
-        <locationY>1116</locationY>
+        <locationX>666</locationX>
+        <locationY>1224</locationY>
         <assignmentItems>
             <assignToReference>Loop_Thru_Opps_For_Stage_Change.StageName</assignToReference>
             <operator>Assign</operator>
@@ -140,11 +140,34 @@
         </connector>
     </assignments>
     <decisions>
+        <description>Lets you determine if you do or dont want to run the flow based on day of the week. 1 = sunday, 2= monday, 7 = saturday. at default, will run every day except saturday.</description>
+        <name>Want_to_run_it</name>
+        <label>Want to run it?</label>
+        <locationX>182</locationX>
+        <locationY>252</locationY>
+        <defaultConnectorLabel>dont run it this day</defaultConnectorLabel>
+        <rules>
+            <name>Yes_Run_It</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>fDayOfTheWeek</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <numberValue>7.0</numberValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Get_First_Qualified_Opp_A_to_Z</targetReference>
+            </connector>
+            <label>Yes Run It</label>
+        </rules>
+    </decisions>
+    <decisions>
         <description>RNG to determine if the stage goes up, down, or is lost.</description>
         <name>X10_30_60_Weight</name>
         <label>10/30/60 Weight</label>
-        <locationX>528</locationX>
-        <locationY>1008</locationY>
+        <locationX>402</locationX>
+        <locationY>1116</locationY>
         <defaultConnector>
             <targetReference>Set_Stage_to_Increment_Formula</targetReference>
         </defaultConnector>
@@ -187,13 +210,21 @@
             <label>Closed Lost</label>
         </rules>
     </decisions>
-    <description>A scheduled flow to change the stage of random opportunities</description>
+    <description>A scheduled flow to change the stage of random opportunities. Includes optional gating by day of the week.</description>
     <environments>Default</environments>
     <formulas>
         <description>makes sure that the same opp isn&apos;t used every single time</description>
         <name>fDateStageChangeReset</name>
         <dataType>Date</dataType>
         <expression>TODAY()-2</expression>
+    </formulas>
+    <formulas>
+        <description>Returns a number based on the day of the week.
+1= sunday, 2= monday, ... , 7= saturday. this formula exists so that way if you dont want to run it every single day you dont have to.</description>
+        <name>fDayOfTheWeek</name>
+        <dataType>Number</dataType>
+        <expression>WEEKDAY(today())</expression>
+        <scale>0</scale>
     </formulas>
     <formulas>
         <description>What Stage changes should be if they are</description>
@@ -221,8 +252,8 @@
         <description>loop thru those 4 opps</description>
         <name>Loop_Thru_Opps_For_Stage_Change</name>
         <label>Loop Thru Opps For Stage Change</label>
-        <locationX>176</locationX>
-        <locationY>792</locationY>
+        <locationX>50</locationX>
+        <locationY>900</locationY>
         <collectionReference>stageOppsFoundForLoopAtoZ</collectionReference>
         <iterationOrder>Asc</iterationOrder>
         <nextValueConnector>
@@ -255,8 +286,8 @@
         <description>Gets the first opp in the discovery stage</description>
         <name>Get_First_Discovery_Opp_A_to_Z</name>
         <label>Get First Discovery Opp A to Z</label>
-        <locationX>176</locationX>
-        <locationY>360</locationY>
+        <locationX>50</locationX>
+        <locationY>468</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Get_First_P_Q_Opp_A_to_Z</targetReference>
@@ -293,8 +324,8 @@
         <description>Gets first opp in the negotiation stage</description>
         <name>Get_First_Negotiation_Opp_A_to_Z</name>
         <label>Get First Negotiation Opp A to Z</label>
-        <locationX>176</locationX>
-        <locationY>576</locationY>
+        <locationX>50</locationX>
+        <locationY>684</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Combine_Opps_for_Stage_Loop</targetReference>
@@ -331,8 +362,8 @@
         <description>Gets first opp in the p/q stage</description>
         <name>Get_First_P_Q_Opp_A_to_Z</name>
         <label>Get First P/Q Opp A to Z</label>
-        <locationX>176</locationX>
-        <locationY>468</locationY>
+        <locationX>50</locationX>
+        <locationY>576</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Get_First_Negotiation_Opp_A_to_Z</targetReference>
@@ -369,8 +400,8 @@
         <description>Gets the first opp in the qualified stage</description>
         <name>Get_First_Qualified_Opp_A_to_Z</name>
         <label>Get First Qualified Opp A to Z</label>
-        <locationX>176</locationX>
-        <locationY>252</locationY>
+        <locationX>50</locationX>
+        <locationY>360</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Get_First_Discovery_Opp_A_to_Z</targetReference>
@@ -407,15 +438,15 @@
         <description>updates the stage on the 4 opps per the loop</description>
         <name>Update_Stages</name>
         <label>Update Stages</label>
-        <locationX>176</locationX>
-        <locationY>1392</locationY>
+        <locationX>50</locationX>
+        <locationY>1500</locationY>
         <inputReference>rcvStageOppsToUpdate</inputReference>
     </recordUpdates>
     <start>
-        <locationX>50</locationX>
+        <locationX>56</locationX>
         <locationY>0</locationY>
         <connector>
-            <targetReference>Get_First_Qualified_Opp_A_to_Z</targetReference>
+            <targetReference>Want_to_run_it</targetReference>
         </connector>
         <schedule>
             <frequency>Daily</frequency>
