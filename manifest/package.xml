@@ -6,8 +6,10 @@
 		<name>ApexClass</name>
 	</types>
 	<types>
-		<members>Scheduled_Opp_Edits</members>
+		<members>Scheduled_ACN_Nudge_Amount</members>
+		<members>Scheduled_ACN_Nudge_Close_Date</members>
+		<members>Scheduled_ACN_Nudge_Stage</members>
 		<name>Flow</name>
 	</types>
-	<version>58.0</version>
+	<version>60.0</version>
 </Package>
