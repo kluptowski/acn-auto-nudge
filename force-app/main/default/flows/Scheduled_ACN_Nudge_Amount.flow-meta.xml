@@ -214,7 +214,7 @@
         <description>Amount after adjustment increase</description>
         <name>fAmountIncrease</name>
         <dataType>Currency</dataType>
-        <expression>{!Loop_thru_Top_amts.Amount}+({!Loop_thru_Top_amts.Amount}*({!Get_Random_Amount_Decrease.randomNumber}/100))</expression>
+        <expression>{!Loop_thru_Top_amts.Amount}+({!Loop_thru_Top_amts.Amount}*({!Get_Random_Amount_Increase.randomNumber}/100))</expression>
         <scale>2</scale>
     </formulas>
     <formulas>
