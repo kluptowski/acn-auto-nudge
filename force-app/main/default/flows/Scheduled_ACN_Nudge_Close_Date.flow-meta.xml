@@ -100,7 +100,7 @@
             </value>
         </assignmentItems>
         <assignmentItems>
-            <assignToReference>vDupeCheckID</assignToReference>
+            <assignToReference>cvDupeCheck</assignToReference>
             <operator>Add</operator>
             <value>
                 <elementReference>Loop_thru_Close_Date_Opps.Id</elementReference>
