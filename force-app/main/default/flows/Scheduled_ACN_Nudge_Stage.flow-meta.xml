@@ -4,8 +4,8 @@
         <description>Between 0 and 1 for probability weighting</description>
         <name>Random_Number_for_Stage</name>
         <label>Random Number for Stage</label>
-        <locationX>402</locationX>
-        <locationY>1008</locationY>
+        <locationX>930</locationX>
+        <locationY>2208</locationY>
         <actionName>GetRandomNumber</actionName>
         <actionType>apex</actionType>
         <connector>
@@ -30,11 +30,11 @@
     </actionCalls>
     <apiVersion>60.0</apiVersion>
     <assignments>
-        <description>throw alll these into one cv so they can be looped</description>
-        <name>Combine_Opps_for_Stage_Loop</name>
-        <label>Combine Opps for Stage Loop</label>
+        <description>throw all these into one cv so they can be looped - this for just the disco opp</description>
+        <name>Assign_D_Opp_to_Loop</name>
+        <label>Assign D Opp to Loop</label>
         <locationX>50</locationX>
-        <locationY>792</locationY>
+        <locationY>984</locationY>
         <assignmentItems>
             <assignToReference>stageOppsFoundForLoopAtoZ</assignToReference>
             <operator>Add</operator>
@@ -42,6 +42,16 @@
                 <elementReference>Get_First_Discovery_Opp_A_to_Z</elementReference>
             </value>
         </assignmentItems>
+        <connector>
+            <targetReference>Get_First_P_Q_Opp_A_to_Z</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>throw alll these into one cv so they can be looped - negotiation</description>
+        <name>Assign_N_Opp_to_Loop</name>
+        <label>Assign N Opp to Loop</label>
+        <locationX>50</locationX>
+        <locationY>1800</locationY>
         <assignmentItems>
             <assignToReference>stageOppsFoundForLoopAtoZ</assignToReference>
             <operator>Add</operator>
@@ -49,6 +59,16 @@
                 <elementReference>Get_First_Negotiation_Opp_A_to_Z</elementReference>
             </value>
         </assignmentItems>
+        <connector>
+            <targetReference>final_null</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>throw all these into one cv so they can be looped - this for just the PQ opp</description>
+        <name>Assign_PQ_Opp_to_Loop</name>
+        <label>Assign PQ Opp to Loop</label>
+        <locationX>50</locationX>
+        <locationY>1392</locationY>
         <assignmentItems>
             <assignToReference>stageOppsFoundForLoopAtoZ</assignToReference>
             <operator>Add</operator>
@@ -56,6 +76,16 @@
                 <elementReference>Get_First_P_Q_Opp_A_to_Z</elementReference>
             </value>
         </assignmentItems>
+        <connector>
+            <targetReference>Get_First_Negotiation_Opp_A_to_Z</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>throw all these into one cv so they can be looped - this for just the qualified opp</description>
+        <name>Assign_Q_Opp_to_Loop</name>
+        <label>Assign Q Opp to Loop</label>
+        <locationX>50</locationX>
+        <locationY>576</locationY>
         <assignmentItems>
             <assignToReference>stageOppsFoundForLoopAtoZ</assignToReference>
             <operator>Add</operator>
@@ -64,15 +94,15 @@
             </value>
         </assignmentItems>
         <connector>
-            <targetReference>Loop_Thru_Opps_For_Stage_Change</targetReference>
+            <targetReference>Get_First_Discovery_Opp_A_to_Z</targetReference>
         </connector>
     </assignments>
     <assignments>
         <description>moves stage to closed lost and adds to record collection variable</description>
         <name>Set_Stage_Closed_Lost</name>
         <label>Set Stage Closed Lost</label>
-        <locationX>402</locationX>
-        <locationY>1224</locationY>
+        <locationX>930</locationX>
+        <locationY>2424</locationY>
         <assignmentItems>
             <assignToReference>Loop_Thru_Opps_For_Stage_Change.StageName</assignToReference>
             <operator>Assign</operator>
@@ -95,8 +125,8 @@
         <description>moves stage down 1 and adds to record collection variable</description>
         <name>Set_Stage_to_Decrement_Formula</name>
         <label>Set Stage to Decrement Formula</label>
-        <locationX>138</locationX>
-        <locationY>1224</locationY>
+        <locationX>666</locationX>
+        <locationY>2424</locationY>
         <assignmentItems>
             <assignToReference>Loop_Thru_Opps_For_Stage_Change.StageName</assignToReference>
             <operator>Assign</operator>
@@ -119,8 +149,8 @@
         <description>moves stage up 1 and adds to record collection variable</description>
         <name>Set_Stage_to_Increment_Formula</name>
         <label>Set Stage to Increment Formula</label>
-        <locationX>666</locationX>
-        <locationY>1224</locationY>
+        <locationX>1194</locationX>
+        <locationY>2424</locationY>
         <assignmentItems>
             <assignToReference>Loop_Thru_Opps_For_Stage_Change.StageName</assignToReference>
             <operator>Assign</operator>
@@ -140,10 +170,136 @@
         </connector>
     </assignments>
     <decisions>
+        <description>so it doesnt error</description>
+        <name>final_null</name>
+        <label>final null</label>
+        <locationX>182</locationX>
+        <locationY>1992</locationY>
+        <defaultConnector>
+            <targetReference>Loop_Thru_Opps_For_Stage_Change</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Stop_Nothing_found</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>stageOppsFoundForLoopAtoZ</leftValueReference>
+                <operator>IsEmpty</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_Stages</targetReference>
+            </connector>
+            <label>Stop - Nothing found</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Found_One</name>
+        <label>Found One?</label>
+        <locationX>182</locationX>
+        <locationY>468</locationY>
+        <defaultConnector>
+            <targetReference>Get_First_Discovery_Opp_A_to_Z</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>None</defaultConnectorLabel>
+        <rules>
+            <name>Found</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_First_Qualified_Opp_A_to_Z.Id</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_Q_Opp_to_Loop</targetReference>
+            </connector>
+            <label>Found</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Found_one_disco</name>
+        <label>Found one?</label>
+        <locationX>182</locationX>
+        <locationY>876</locationY>
+        <defaultConnector>
+            <targetReference>Get_First_P_Q_Opp_A_to_Z</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>None</defaultConnectorLabel>
+        <rules>
+            <name>Found_Discovery</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_First_Discovery_Opp_A_to_Z.Id</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_D_Opp_to_Loop</targetReference>
+            </connector>
+            <label>Found</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Found_one_ne</name>
+        <label>Found one?</label>
+        <locationX>182</locationX>
+        <locationY>1692</locationY>
+        <defaultConnector>
+            <targetReference>final_null</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>found_negotiation</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_First_Negotiation_Opp_A_to_Z.Id</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_N_Opp_to_Loop</targetReference>
+            </connector>
+            <label>found</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Found_one_pq</name>
+        <label>Found one?</label>
+        <locationX>182</locationX>
+        <locationY>1284</locationY>
+        <defaultConnector>
+            <targetReference>Get_First_Negotiation_Opp_A_to_Z</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>none</defaultConnectorLabel>
+        <rules>
+            <name>Found_PQ</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_First_P_Q_Opp_A_to_Z.Id</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_PQ_Opp_to_Loop</targetReference>
+            </connector>
+            <label>Found</label>
+        </rules>
+    </decisions>
+    <decisions>
         <description>Lets you determine if you do or dont want to run the flow based on day of the week. 1 = sunday, 2= monday, 7 = saturday. at default, will run every day except saturday.</description>
         <name>Want_to_run_it</name>
         <label>Want to run it?</label>
-        <locationX>182</locationX>
+        <locationX>488</locationX>
         <locationY>252</locationY>
         <defaultConnectorLabel>dont run it this day</defaultConnectorLabel>
         <rules>
@@ -166,8 +322,8 @@
         <description>RNG to determine if the stage goes up, down, or is lost.</description>
         <name>X10_30_60_Weight</name>
         <label>10/30/60 Weight</label>
-        <locationX>402</locationX>
-        <locationY>1116</locationY>
+        <locationX>930</locationX>
+        <locationY>2316</locationY>
         <defaultConnector>
             <targetReference>Set_Stage_to_Increment_Formula</targetReference>
         </defaultConnector>
@@ -210,7 +366,7 @@
             <label>Closed Lost</label>
         </rules>
     </decisions>
-    <description>A scheduled flow to change the stage of random opportunities. Includes optional gating by day of the week.</description>
+    <description>A scheduled flow to change the stage of random opportunities. Includes optional gating by day of the week. Individual dupe checks</description>
     <environments>Default</environments>
     <formulas>
         <description>makes sure that the same opp isn&apos;t used every single time</description>
@@ -252,8 +408,8 @@
         <description>loop thru those 4 opps</description>
         <name>Loop_Thru_Opps_For_Stage_Change</name>
         <label>Loop Thru Opps For Stage Change</label>
-        <locationX>50</locationX>
-        <locationY>900</locationY>
+        <locationX>578</locationX>
+        <locationY>2100</locationY>
         <collectionReference>stageOppsFoundForLoopAtoZ</collectionReference>
         <iterationOrder>Asc</iterationOrder>
         <nextValueConnector>
@@ -286,11 +442,11 @@
         <description>Gets the first opp in the discovery stage</description>
         <name>Get_First_Discovery_Opp_A_to_Z</name>
         <label>Get First Discovery Opp A to Z</label>
-        <locationX>50</locationX>
-        <locationY>468</locationY>
+        <locationX>182</locationX>
+        <locationY>768</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
-            <targetReference>Get_First_P_Q_Opp_A_to_Z</targetReference>
+            <targetReference>Found_one_disco</targetReference>
         </connector>
         <filterLogic>and</filterLogic>
         <filters>
@@ -324,11 +480,11 @@
         <description>Gets first opp in the negotiation stage</description>
         <name>Get_First_Negotiation_Opp_A_to_Z</name>
         <label>Get First Negotiation Opp A to Z</label>
-        <locationX>50</locationX>
-        <locationY>684</locationY>
+        <locationX>182</locationX>
+        <locationY>1584</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
-            <targetReference>Combine_Opps_for_Stage_Loop</targetReference>
+            <targetReference>Found_one_ne</targetReference>
         </connector>
         <filterLogic>and</filterLogic>
         <filters>
@@ -362,11 +518,11 @@
         <description>Gets first opp in the p/q stage</description>
         <name>Get_First_P_Q_Opp_A_to_Z</name>
         <label>Get First P/Q Opp A to Z</label>
-        <locationX>50</locationX>
-        <locationY>576</locationY>
+        <locationX>182</locationX>
+        <locationY>1176</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
-            <targetReference>Get_First_Negotiation_Opp_A_to_Z</targetReference>
+            <targetReference>Found_one_pq</targetReference>
         </connector>
         <filterLogic>and</filterLogic>
         <filters>
@@ -400,11 +556,11 @@
         <description>Gets the first opp in the qualified stage</description>
         <name>Get_First_Qualified_Opp_A_to_Z</name>
         <label>Get First Qualified Opp A to Z</label>
-        <locationX>50</locationX>
+        <locationX>182</locationX>
         <locationY>360</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
-            <targetReference>Get_First_Discovery_Opp_A_to_Z</targetReference>
+            <targetReference>Found_One</targetReference>
         </connector>
         <filterLogic>and</filterLogic>
         <filters>
@@ -438,12 +594,12 @@
         <description>updates the stage on the 4 opps per the loop</description>
         <name>Update_Stages</name>
         <label>Update Stages</label>
-        <locationX>50</locationX>
-        <locationY>1500</locationY>
+        <locationX>182</locationX>
+        <locationY>2784</locationY>
         <inputReference>rcvStageOppsToUpdate</inputReference>
     </recordUpdates>
     <start>
-        <locationX>56</locationX>
+        <locationX>362</locationX>
         <locationY>0</locationY>
         <connector>
             <targetReference>Want_to_run_it</targetReference>

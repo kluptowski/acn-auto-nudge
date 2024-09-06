@@ -99,6 +99,13 @@
                 <elementReference>Loop_thru_Close_Date_Opps</elementReference>
             </value>
         </assignmentItems>
+        <assignmentItems>
+            <assignToReference>vDupeCheckID</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <elementReference>Loop_thru_Close_Date_Opps.Id</elementReference>
+            </value>
+        </assignmentItems>
         <connector>
             <targetReference>Loop_thru_Close_Date_Opps</targetReference>
         </connector>
@@ -142,7 +149,7 @@
         </sortOptions>
     </collectionProcessors>
     <decisions>
-        <description>Lets you determine if you do or dont want to run the flow based on day of the week. 1 = sunday, 2= monday, 7 = saturday. at default, will run every day except saturday.</description>
+        <description>Lets you determine if you do or dont want to run the flow based on day of the week. 1 = sunday, 2= monday, 7 = saturday. at default, will run every day except saturday night.</description>
         <name>Want_to_run_it</name>
         <label>Want to run it?</label>
         <locationX>182</locationX>
@@ -153,7 +160,7 @@
             <conditionLogic>and</conditionLogic>
             <conditions>
                 <leftValueReference>fDayofTheWeek</leftValueReference>
-                <operator>NotEqualTo</operator>
+                <operator>LessThan</operator>
                 <rightValue>
                     <numberValue>7.0</numberValue>
                 </rightValue>
@@ -164,7 +171,7 @@
             <label>Yes Run It</label>
         </rules>
     </decisions>
-    <description>A scheduled flow to change the close date of random opportunities. Includes optional gating by day of the week.</description>
+    <description>A scheduled flow to change the close date of random opportunities. Includes optional gating by day of the week. Dupe check to prevent redundant update errors</description>
     <environments>Default</environments>
     <formulas>
         <name>fCloseDatePushFinal</name>
@@ -276,6 +283,13 @@
                 <elementReference>fPullDateRangeStart</elementReference>
             </value>
         </filters>
+        <filters>
+            <field>Id</field>
+            <operator>NotIn</operator>
+            <value>
+                <elementReference>cvDupeCheck</elementReference>
+            </value>
+        </filters>
         <getFirstRecordOnly>false</getFirstRecordOnly>
         <object>Opportunity</object>
         <storeOutputAutomatically>true</storeOutputAutomatically>
@@ -325,11 +339,11 @@
         <schedule>
             <frequency>Daily</frequency>
             <startDate>2024-06-03</startDate>
-            <startTime>23:15:00.000Z</startTime>
+            <startTime>23:00:00.000Z</startTime>
         </schedule>
         <triggerType>Scheduled</triggerType>
     </start>
-    <status>Draft</status>
+    <status>Active</status>
     <variables>
         <name>currentItemFromSourceCollection</name>
         <dataType>SObject</dataType>
@@ -337,6 +351,14 @@
         <isInput>false</isInput>
         <isOutput>false</isOutput>
         <objectType>Opportunity</objectType>
+    </variables>
+    <variables>
+        <description>makes sure the push opps aren&apos;t found in the pull</description>
+        <name>cvDupeCheck</name>
+        <dataType>String</dataType>
+        <isCollection>true</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
     </variables>
     <variables>
         <name>krcvOpp</name>
@@ -372,5 +394,13 @@
         <isInput>false</isInput>
         <isOutput>false</isOutput>
         <objectType>Opportunity</objectType>
+    </variables>
+    <variables>
+        <description>to prevent the dupes</description>
+        <name>vDupeCheckID</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
     </variables>
 </Flow>
